@@ -1,0 +1,126 @@
+#!/bin/bash
+
+#****************************************
+# Rob Lambert
+# Unix bash shell autoexec -> environment
+# edited 2014.08.06
+#****************************************
+
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+#ensure bashrc and profile are readable
+if [ $TERM != "dumb" ]; then
+    chmod ug+rwx ~/.bashrc
+    chmod ug+rwx ~/.bash_profile
+fi
+
+ulimit -c 0 #set coredumpsize to zero, no coredumps
+adding=~/scripts
+eval adding=$adding
+if [[ ":$PATH:" == *":$adding:"* ]]; then
+    true
+else
+    export PATH=${PATH}:${adding}
+fi
+
+######### 1.Nice welcome information ####################################
+
+  if [[ $TERM == "xterm" || $TERM == "xterm-256color" ]]; then
+
+    #Colourising text and other special characters
+
+    black='\E[30m'
+    red='\E[31m'
+    green='\E[32m'
+    yellow='\E[33m'
+    blue='\E[34m'
+    magenta='\E[35m'
+    cyan='\E[36m'
+    grey='\E[37m'
+    grey2='\E[28m'
+    onblack='\E[40m'
+    onred='\E[41m'
+    ongreen='\E[42m'
+    onyellow='\E[43m'
+    onblue='\E[44m'
+    onmagenta='\E[45m'
+    oncyan='\E[46m'
+    ongrey='\E[47m'
+    alias ColReset="tput sgr0"      #  Reset text attributes to normal
+                               #+ without clearing screen.
+    fullline='--------------------------------------------------------------------------------'
+
+    #printing the welcome information
+
+    tput sgr0
+    echo -e "$blue""$fullline""$blue"
+    df -Ph
+    echo -e "$blue""$fullline""$blue"
+    uptime
+    top -b -n 1 | head -n 10 | grep pu --color=NEVER    #list of CPU status
+    echo -e "$blue""$fullline""$blue"
+    python -c "import commands; res=commands.getstatusoutput('who -q'); resnames=res[-1].split('\n')[0].split(); print res[-1].split('\n')[-1], dict((i,resnames.count(i)) for i in resnames);"
+    echo -e "$blue""$fullline"
+    tput sgr0
+  fi
+
+
+######### 3. User Interface ####################################
+
+  if [ $TERM != "dumb" ]; then
+
+    BLACK="\[\033[30m\]"
+    RED='\[\033[31m\]'
+    GREEN='\[\033[32m\]'
+    YELLOW='\[\033[33m\]'
+    BLUE='\[\033[34m\]'
+    MAGENTA='\[\033[35m\]'
+    CYAN='\[\033[36m\]'
+    GREY='\[\033[37m\]'
+    WHITE='\[\033[1;37m\]'
+    ONBLACK='\[\033[40m\]'
+    ONRED='\[\033[41m\]'
+    ONGREEN='\[\033[42m\]'
+    ONYELLOW='\[\033[43m\]'
+    ONBLUE='\[\033[44m\]'
+    ONMAGENTA='\[\033[45m\]'
+    ONCYAN='\[\033[46m\]'
+    ONGREY='\[\033[47m\]'
+    RETURN='\[\033[0m\]'
+
+    PS1="\[\e]0;\H\a\]${WHITE}${ONBLUE}\u@\H${BLACK}${RETURN} \w > "
+    export PS1
+
+  fi
+
+######### 4. Aliases ####################################
+
+  #
+  if [ $TERM != "dumb" ]; then
+    #alias ssh='sshproc -X'
+
+    alias ll='ls -l'
+    alias lal='ls -al'
+
+    theshcom='ssh -X -L 5964:127.0.0.1:5964 -D localhost:3000'
+
+    alias tunnel=$theshcom
+
+    alias vnclaptop='vncserver :64 -geometry 1600x830'
+    alias vncbasic='vncserver :64 -geometry 1280x1000'
+
+    function myemacs()
+    {
+	tit="$1"
+	if [ -z "$tit" ]; then tit="emacs"; fi
+	emacs --no-splash --title "$tit" $@
+    }
+    alias emacs='myemacs'
+    alias e='emacs'
+    alias bell='printf "\a"'
+  fi
+

@@ -1,0 +1,95 @@
+#!/bin/sh
+#cleanup: will find and remove all temp files... eventually
+
+echo
+echo "finding files containing ~, #, screenshots, afs lock/temp files and pyc"
+SIZE=0
+TOTAL=0
+FOUND=0
+REMOVED=0
+
+case "$1" in
+  rm) echo removing all ; remove=1 ;;
+  *) option="$1" ;; 
+  "") echo type rm as arguement to remove all ;;
+ 
+esac
+
+case "$2" in 
+  rm) echo removing all ;;
+  *) option="$2" ;;
+  "") echo options rm=remove all * = include files ending .* ;;
+
+esac
+
+find ./ -name "*.*~" | while read a; do
+
+   ls -l "$a"
+   case "$remove" in
+         1)  rm "$a" ; echo -e '\E[31m'"             ...file removed"'\E[0m';; 
+   esac
+
+done
+
+find ./ -name "#*" | while read a; do
+
+   ls -l "$a"  
+   case "$remove" in
+         1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+   esac
+
+done
+
+find ./ -name ".#*" | while read a; do
+
+   ls -l "$a"  
+   case "$remove" in
+         1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+   esac
+
+done
+
+find ./ -name ".__afs*" | while read a; do
+
+   ls -l "$a"  
+   case "$remove" in
+         1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+   esac
+
+done
+
+if [ -n $option ]
+  then
+    find ./ -name *.$option | while read a; do
+    
+       ls -l "$a"  
+       case "$remove" in
+             1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+       esac
+    
+    done
+fi
+
+find ./ -maxdepth 1 -name "Screenshot*" | while read a; do
+
+   ls -l "$a"  
+   case "$remove" in
+         1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+   esac
+
+done
+
+find ./ -name "*.pyc" | while read a; do
+   if [[ "$a" == *InstallArea*  ]]
+   then
+     a=''
+   else
+       
+       ls -l "$a"  
+       case "$remove" in
+	   1)  rm "$a" ; echo  -e '\E[31m'"             ...file removed"'\E[0m';;
+       esac
+   fi
+done
+
+echo

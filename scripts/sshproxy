@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+    cmd=""
+    prnam=''
+    prhs=''
+    if [ -z "$http_proxy" ]; then 
+	ssh $@
+    else
+	prnam=`python -c "import os; print os.environ['http_proxy'].split('//')[-1].split(':')[0]"`
+	prhs=`python -c "import os; print os.environ['http_proxy'].split('//')[-1].split(':')[-1].split('/')[0]"`
+	ssh -p 443 -o "ProxyCommand=corkscrew $prnam $prhs %h %p" $@
+    fi
