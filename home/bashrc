@@ -18,7 +18,22 @@ if [ $TERM != "dumb" ]; then
     chmod ug+rwx ~/.bash_profile
 fi
 
-ulimit -c 0 #set coredumpsize to zero, no coredumps
+#check if I am on a mac
+if type sw_vers >/dev/null 2>&1; then
+   macv=`sw_vers -productName`
+   if [[ ${macv} == *"Mac OS"* ]]; then
+     mac='yes'
+   else
+     mac='no'
+   fi
+else
+  mac='no'
+fi
+
+if [ ${mac} == 'no' ]; then
+  ulimit -c 0 #set coredumpsize to zero, no coredumps
+fi
+
 adding=~/scripts
 eval adding=$adding
 if [[ ":$PATH:" == *":$adding:"* ]]; then
@@ -29,6 +44,7 @@ fi
 
 ######### 1.Nice welcome information ####################################
 
+if [ ${mac} == 'no' ]; then
   if [[ $TERM == "xterm" || $TERM == "xterm-256color" ]]; then
 
     #Colourising text and other special characters
@@ -67,7 +83,7 @@ fi
     echo -e "$blue""$fullline"
     tput sgr0
   fi
-
+fi
 
 ######### 3. User Interface ####################################
 
